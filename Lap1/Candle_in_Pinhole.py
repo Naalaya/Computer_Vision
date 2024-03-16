@@ -23,9 +23,9 @@ def pinHole (location):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_title('Pinhole Camera Simulation')
-#for i in range(len(list1)):
-location = random.choice(list1)
-pinHole(location)
+for i in range(len(list1)):
+    location = random.choice(list1)
+    pinHole(location)
 
 
 
