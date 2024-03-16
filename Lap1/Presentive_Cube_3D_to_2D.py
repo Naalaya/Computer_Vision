@@ -44,14 +44,28 @@ def update(frame):
     ax3d.clear()
     ax2d.clear()
 
-    # Apply rotation matrix around Y-axis
+    # Apply rotation matrix around X-axis
     angle = frame * np.pi / 180.0
-    rotation_matrix = np.array([
+    rotation_matrixX = np.array([
+        [1, 0, 0],
+        [0, np.cos(angle), -np.sin(angle)],
+        [0, np.sin(angle), np.cos(angle)]
+    ])
+    # Apply rotation matrix around Y-axis
+    rotation_matrixY = np.array([
         [np.cos(angle), 0, np.sin(angle)],
         [0, 1, 0],
         [-np.sin(angle), 0, np.cos(angle)]
     ])
-    rotated_vertices = np.dot(cube_vertices, rotation_matrix)
+    # Apply rotation matrix around Z-axis
+    rotation_matrixZ = np.array([
+        [np.cos(angle), -np.sin(angle), 0],
+        [np.sin(angle), np.cos(angle), 0],
+        [0, 0, 1]
+    ])
+    rotated_vertices = np.dot(cube_vertices, rotation_matrixX)
+    rotated_vertices = np.dot(rotated_vertices, rotation_matrixY)
+    rotated_vertices = np.dot(rotated_vertices, rotation_matrixZ)
 
     # Plot the rotated cube in 3D
     for edge in cube_edges:
