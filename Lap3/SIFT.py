@@ -6,7 +6,7 @@ img1 = cv2.imread('image1.jpg', cv2.IMREAD_GRAYSCALE)
 img2 = cv2.imread('image2.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Initialize SIFT detector
-sift = cv2.SIFT_create()
+sift = cv2.SIFT.create()
 
 # Detect keypoints and compute descriptors
 keypoints1, descriptors1 = sift.detectAndCompute(img1, None)
