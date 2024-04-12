@@ -1,24 +1,33 @@
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 
-# read images
-img1 = cv2.imread('TestImg.jpeg')
-img2 = cv2.imread('TrainImg.jpg')
+sourceImage = cv2.imread(r"/Users/a410/Desktop/Computer_Vision/Lap3/e6edb023caa43d9a490931ea9b61160b.jpg")
+targetImage = cv2.imread(r"/Users/a410/Desktop/Computer_Vision/Lap3/e6edb023caa43d9a490931ea9b61160b.png")
 
-img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+sift = cv2.SIFT_create()
 
-#sift
-sift = cv2.SIFT.create()
+sourceImageGray = cv2.cvtColor(sourceImage, cv2.COLOR_BGR2GRAY)
+targetImage = cv2.cvtColor(targetImage, cv2.COLOR_BGR2GRAY)
 
-keypoints_1, descriptors_1 = sift.detectAndCompute(img1,None)
-keypoints_2, descriptors_2 = sift.detectAndCompute(img2,None)
+kp1, des1 = sift.detectAndCompute(sourceImageGray, None)
+kp2, des2 = sift.detectAndCompute(targetImage, None)
 
-#feature matching
-bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
+index_params = dict(algorithm=1, trees=5)
+search_params = dict(checks=50)
+flann = cv2.FlannBasedMatcher(index_params, search_params)
+matches = flann.knnMatch(des1, des2, k=2)
 
-matches = bf.match(descriptors_1,descriptors_2)
-matches = sorted(matches, key = lambda x:x.distance)
+good_matches = [[0, 0] for i in range(len(matches))]
 
-img3 = cv2.drawMatches(img1, keypoints_1, img2, keypoints_2, matches[:50], img2, flags=2)
-plt.imshow(img3),plt.show()
+for i, (m, n) in enumerate(matches):
+    if m.distance < 0.6 * n.distance:
+        good_matches[i] = [1, 0]
+
+result = cv2.drawMatchesKnn(sourceImage, kp1, targetImage, kp2, matches, None,  matchColor=(0, 155, 0),
+                             singlePointColor=(255, 0, 0),
+                             matchesMask=good_matches,
+                             flags=0)
+cv2.imshow("SIFT Matching",result)
+cv2.waitKey(5000000)
+cv2.destroyAllWindows()
